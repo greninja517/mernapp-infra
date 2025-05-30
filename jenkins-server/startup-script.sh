@@ -1,0 +1,47 @@
+#!/bin/bash
+
+# Update system
+apt-get update -y
+apt-get upgrade -y
+
+# Installing Docker
+apt-get install -y apt-transport-https ca-certificates curl software-properties-common gnupg
+install -m 0755 -d /etc/apt/keyrings
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+
+echo \
+  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] \
+  https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
+  tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+apt-get update -y
+apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+
+
+#Installing Terraform
+TERRAFORM_VERSION="1.8.5"  
+wget https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip
+apt-get install -y unzip
+unzip terraform_${TERRAFORM_VERSION}_linux_amd64.zip
+mv terraform /usr/local/bin/
+rm terraform_${TERRAFORM_VERSION}_linux_amd64.zip
+
+#Installing Jenkins
+curl -fsSL https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key | tee \
+  /usr/share/keyrings/jenkins-keyring.asc > /dev/null
+
+echo deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc] \
+  https://pkg.jenkins.io/debian-stable binary/ | tee \
+  /etc/apt/sources.list.d/jenkins.list > /dev/null
+
+apt-get update -y
+apt-get install -y openjdk-17-jdk jenkins
+
+# Enable and start Jenkins
+systemctl enable jenkins
+systemctl start jenkins
+
+usermod -aG docker jenkins
+systemctl restart jenkins
+
+
