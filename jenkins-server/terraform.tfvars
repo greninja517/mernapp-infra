@@ -16,6 +16,12 @@ roles = [
   "roles/storage.admin",
 ]
 
+ingress_ranges = [ 
+  "103.149.94.242/32",
+  "202.71.156.66/32", 
+  "103.68.38.66/32",
+]
+
 jenkins_server = {
   image        = "ubuntu-os-cloud/ubuntu-2204-lts",
   name         = "jenkins-ci-server",

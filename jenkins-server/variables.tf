@@ -17,7 +17,7 @@ variable "apis" {
 
 variable "account_id" {
   type        = string
-  description = "Jenksins Service Account ID"
+  description = "Jenkins Service Account ID"
 }
 
 variable "roles" {
@@ -28,7 +28,7 @@ variable "roles" {
 variable "ingress_ranges" {
   type        = list(string)
   description = "List of IP ranges allowed to access the Jenkins server"
-  default     = ["0.0.0.0/0"]
+  default     = ["157.32.194.188/32"]
 }
 
 variable "jenkins_server" {
