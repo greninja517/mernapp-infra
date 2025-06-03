@@ -75,7 +75,7 @@ resource "google_compute_firewall" "gke_internal" {
   name      = "gke-allow-internal"
   network   = google_compute_network.vpc_network.name
   direction = "INGRESS"
-  priority  = 100
+  priority  = 1000
 
   source_ranges = [
     var.subnet_config.primary_cidr,
@@ -158,14 +158,29 @@ resource "google_container_cluster" "primary_cluster" {
     channel = "REGULAR"
   }
 
-
+  # terraform will remove the default node pool that is created by GKE
   remove_default_node_pool = true
+
+  #  for the regional clusters, the initial_node_count defines the no. of nodes to
+  # create in each zone for the defaul node pool that is automatically created
   initial_node_count       = 1
+  node_config {
+    disk_type = "pd-standard"
+    disk_size_gb = 15
+    machine_type = "e2-small"
+    service_account = google_service_account.gke_node_sa.email
+    oauth_scopes = [
+      "https://www.googleapis.com/auth/cloud-platform"
+    ]
+  }
 
   # public API Endpoint but private nodes
   private_cluster_config {
     enable_private_nodes    = true
     enable_private_endpoint = false
+    master_global_access_config {
+      enabled = true
+    }
   }
 
   # controlling the acces to API endpoint; only the mentioned CIDR blocks can access the API
@@ -173,10 +188,10 @@ resource "google_container_cluster" "primary_cluster" {
 
     dynamic "cidr_blocks" {
       for_each = var.cluster_access_cidrs
-      iterator = port
+      iterator = cidr_item
       content {
-        cidr_block   = port.value
-        display_name = "authorized networks/ips"
+        cidr_block   = cidr_item.value
+        display_name = "authorized network-${cidr_item.key}"
       }
     }
   }
@@ -189,13 +204,20 @@ resource "google_container_cluster" "primary_cluster" {
   }
 }
 
-resource "google_container_node_pool" "woker_nodes" {
-  name       = "my-node-pool"
+resource "google_container_node_pool" "worker_nodes" {
+  name       = "first-node-pool"
   cluster    = google_container_cluster.primary_cluster.name
   location   = var.region
-  node_count = 1
+  # node_count = 1 # it means 1 node per zone for regional clusters
+  # not needed as we are using autoscaling
+
+  autoscaling {
+    total_min_node_count = 1 # total minimum nodes across all zones for regional clusters
+    total_max_node_count = 1 # total maximum nodes across all zones for regional clusters
+  }
 
   node_config {
+    disk_type = "pd-standard"
     disk_size_gb = var.node_config.disk_size_gb
     preemptible  = var.node_config.preemptible
     machine_type = var.node_config.machine_type

@@ -37,7 +37,7 @@ variable "cluster_name" {
 
 variable "cluster_access_cidrs" {
   type        = list(string)
-  description = "CIDR range for that is allowed to access the GKE cluster API"
+  description = "CIDR range for the network that is allowed to access the GKE cluster API"
   default     = [""]
 }
 
@@ -46,11 +46,8 @@ variable "node_config" {
     machine_type = string
     disk_size_gb = number
     preemptible  = bool
-    min_count    = number
-    max_count    = number
     node_tags    = list(string)
   })
-
 }
 
 
