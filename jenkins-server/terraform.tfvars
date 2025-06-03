@@ -14,6 +14,10 @@ roles = [
   "roles/container.admin",
   "roles/artifactregistry.admin",
   "roles/storage.admin",
+  "roles/iam.serviceAccountAdmin",
+  "roles/iam.serviceAccountUser",
+  "roles/resourcemanager.projectIamAdmin",
+  "roles/logging.admin"
 ]
 
 ingress_ranges = [ 

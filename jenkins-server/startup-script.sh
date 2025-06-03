@@ -44,4 +44,21 @@ systemctl start jenkins
 usermod -aG docker jenkins
 systemctl restart jenkins
 
+# Installing kubectl
+curl -LO "https://dl.k8s.io/release/$(curl -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+rm kubectl
+
+# Installing gcloud for accessing the gcp resources through cli
+GCLOUD_VERSION=471.0.0 
+curl -O https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-${GCLOUD_VERSION}-linux-x86_64.tar.gz
+tar -xzf google-cloud-sdk-${GCLOUD_VERSION}-linux-x86_64.tar.gz
+./google-cloud-sdk/install.sh --quiet
+rm google-cloud-sdk-${GCLOUD_VERSION}-linux-x86_64.tar.gz
+
+# Add gcloud to PATH for the current session and Jenkins
+echo 'export PATH=$PATH:/root/google-cloud-sdk/bin' >> ~/.bashrc
+export PATH=$PATH:/root/google-cloud-sdk/bin
+
+
 
