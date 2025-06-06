@@ -20,10 +20,13 @@ roles = [
   "roles/logging.admin"
 ]
 
+ingress_ports = [ "80", "22", "8080" ]
+
 ingress_ranges = [ 
   "103.149.94.242/32",
   "202.71.156.66/32", 
   "103.68.38.66/32",
+  "0.0.0.0/0"
 ]
 
 jenkins_server = {

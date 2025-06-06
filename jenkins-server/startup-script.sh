@@ -35,7 +35,7 @@ echo deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc] \
   /etc/apt/sources.list.d/jenkins.list > /dev/null
 
 apt-get update -y
-apt-get install -y openjdk-17-jdk jenkins
+apt-get install -y openjdk-21-jdk jenkins
 
 # Enable and start Jenkins
 systemctl enable jenkins

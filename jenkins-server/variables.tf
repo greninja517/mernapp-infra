@@ -25,6 +25,11 @@ variable "roles" {
   description = "List of roles to assign to the Jenkins Service Account"
 }
 
+variable "ingress_ports" {
+  type        = list(string)
+  description = "List of ports allowed for ingress traffic to the Jenkins server"  
+}
+
 variable "ingress_ranges" {
   type        = list(string)
   description = "List of IP ranges allowed to access the Jenkins server"

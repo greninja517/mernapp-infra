@@ -29,6 +29,7 @@ resource "google_compute_network" "jenkins_vpc" {
   auto_create_subnetworks = false
   depends_on              = [google_project_service.service_usage_api]
 }
+
 resource "google_compute_subnetwork" "jenkins_subnet" {
   name          = "jenkins-subnet"
   ip_cidr_range = "192.168.0.0/20"
@@ -42,7 +43,7 @@ resource "google_compute_firewall" "jenkins_ingress" {
 
   allow {
     protocol = "tcp"
-    ports    = ["8080", "22"]
+    ports    = var.ingress_ports
   }
   direction     = "INGRESS"
   source_ranges = var.ingress_ranges
