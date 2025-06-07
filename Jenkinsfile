@@ -5,6 +5,7 @@ pipeline{
         // GOOGLE_APPLICATION_CREDENTIALS=credentials("gcp_sa_key")
         GITHUB_REPO_URL="https://github.com/greninja517/mernapp-infra.git"
         GIT_DEFAULT_BRANCH = "main"
+        GOOGLE_APPLICATION_CREDENTIALS = credentials("gcp_sa_key")  
     }
 
     parameters{
@@ -23,15 +24,15 @@ pipeline{
             }          
         }
 
-        stage("GCP Authenctication"){
-            steps{
-                echo "-------- AUTHENTICATING WITH GCP --------"
+        // stage("GCP Authenctication"){
+        //     steps{
+        //         echo "-------- AUTHENTICATING WITH GCP --------"
 
-                withCredentials([file(credentialsId: 'gcp_sa_key', variable: 'GOOGLE_APPLICATION_CREDENTIALS')]) {
-                    sh 'gcloud auth activate-service-account --key-file=$GOOGLE_APPLICATION_CREDENTIALS'
-                }
-            }
-        }
+        //         withCredentials([file(credentialsId: 'gcp_sa_key', variable: 'GOOGLE_APPLICATION_CREDENTIALS')]) {
+        //             sh 'gcloud auth activate-service-account --key-file=$GOOGLE_APPLICATION_CREDENTIALS'
+        //         }
+        //     }
+        // }
 
         stage("Terraform Init"){
             steps{
