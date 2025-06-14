@@ -15,12 +15,12 @@ gcloud  container  clusters  get-credentials  CLUSTER_NAME  --region  REGION  --
 4. Install argocd on the cluster ( Bastion Host )
 ```bash
 kubectl  create  namespace  argocd
-kubectl  apply  -n  argocd  -f  https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+kubectl apply -n argocd -f  https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
 ```
 
 5. Verify the argocd installation ( Bastion Host )
 ```bash
-kubectl  get  all  -n  argocd
+kubectl get all -n argocd
 ```
 
 6. Get the ArgoCD admin password ( Bastion Host )

@@ -17,5 +17,6 @@ module "gke_cluster" {
   gke_node             = var.gke_node
   cluster_name         = var.cluster_name
   cluster_access_cidrs = var.cluster_access_cidrs
+  node_count           = var.node_count
   node_config          = var.node_config
 }

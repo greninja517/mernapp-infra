@@ -41,6 +41,13 @@ variable "cluster_access_cidrs" {
   default     = [""]
 }
 
+variable "node_count" {
+  type = object({
+    max = number
+    min = number
+  })
+}
+
 variable "node_config" {
   type = object({
     machine_type = string

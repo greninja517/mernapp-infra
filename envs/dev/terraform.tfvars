@@ -31,6 +31,11 @@ cluster_access_cidrs = [
   "0.0.0.0/0"
 ]
 
+node_count = {
+  max = 2
+  min = 1
+}
+
 node_config = {
   machine_type = "e2-medium"
   disk_size_gb = 20

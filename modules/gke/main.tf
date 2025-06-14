@@ -212,8 +212,8 @@ resource "google_container_node_pool" "worker_nodes" {
   # not needed as we are using autoscaling
 
   autoscaling {
-    total_min_node_count = 1 # total minimum nodes across all zones for regional clusters
-    total_max_node_count = 1 # total maximum nodes across all zones for regional clusters
+    total_min_node_count = var.node_count.min # total minimum nodes across all zones for regional clusters
+    total_max_node_count = var.node_count.max # total maximum nodes across all zones for regional clusters
   }
 
   node_config {
