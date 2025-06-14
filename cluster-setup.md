@@ -1,7 +1,8 @@
+###  Accessing the ArgoCD  server locally
 Once, the CI pipeline provision the GKE cluster. Then, folow these steps to access the argocd server ui on your local machine through ssh port forwarding using the bastion host.
 1. SSH into bastion host from your local machine
 ```bash
-ssh  -i  <private-key>  username@BASTION_PUBLIC_IP
+ssh -i <private-key> username@BASTION_PUBLIC_IP
 ```
 
 2. Verify the installation of tools like kubectl, helm, gcloud in the bastion host which is done by the bootstrap script.
@@ -9,13 +10,13 @@ ssh  -i  <private-key>  username@BASTION_PUBLIC_IP
 3. Set up the kubectl context to interact with GKE on the bastion host
 
 ```bash
-gcloud  container  clusters  get-credentials  CLUSTER_NAME  --region  REGION  --project  PROJECT_ID
+gcloud container clusters get-credentials CLUSTER_NAME  --region REGION --project PROJECT_ID
 ```
 
 4. Install argocd on the cluster ( Bastion Host )
 ```bash
-kubectl  create  namespace  argocd
-kubectl apply -n argocd -f  https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+kubectl create namespace argocd
+kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
 ```
 
 5. Verify the argocd installation ( Bastion Host )
@@ -25,25 +26,62 @@ kubectl get all -n argocd
 
 6. Get the ArgoCD admin password ( Bastion Host )
 ```bash
-kubectl  -n  argocd  get  secret  argocd-initial-admin-secret  -o  jsonpath="{.data.password}"  |  base64  -d
+kubectl -n argocd get secret argocd-initial-admin-secret -o  jsonpath="{.data.password}" | base64 -d
 ```
 
 7. Set up Port Forwarding
 
 i. SSH port forwarding ( Run on local machine )
 ```bash
-ssh  -i  <private-key-path>  -L  8080:localhost:8080  username@BASTION_PUBLIC_IP
+ssh -i <private-key-path> -L 8080:localhost:8080 username@BASTION_PUBLIC_IP
 ```
 
 ii. Kubectl port forwarding ( Run on bastion Host )
 
 ```bash
-kubectl  port-forward  svc/argocd-server  -n  argocd  8080:80
+kubectl port-forward svc/argocd-server -n argocd 8080:80
 ```
 
 8. Now, You can Access ArgoCD in your `http:localhost:8080`
 
-  
+---
+### Managing the MongoDB Secrets using KubeSeal
+We will use the bitnami's kubeseal controller to encrypt our DB secrets so that they can be pushed safely to github and the GitOps controller will be able to take it during the syncing phase.
+#### 1. Install the Kubeseal Controller
+i. Add the HELM repo
+```bash
+helm repo add bitnami https://charts.bitnami.com/bitnami
+helm repo update
+```
+ii. Install the Chart
+```bash
+helm install sealed-secrets-controller bitnami/sealed-secrets --namespace kube-system
+```
+#### 2. Install the `kubeseal` CLI
+```bash
+# Fetch the latest sealed-secrets version using GitHub API
+KUBESEAL_VERSION=$(curl -s https://api.github.com/repos/bitnami-labs/sealed-secrets/tags | jq -r '.[0].name' | cut -c 2-)
+
+# Check if the version was fetched successfully
+if [ -z "$KUBESEAL_VERSION" ]; then
+    echo "Failed to fetch the latest KUBESEAL_VERSION"
+    exit 1
+fi
+
+curl -OL "https://github.com/bitnami-labs/sealed-secrets/releases/download/v${KUBESEAL_VERSION}/kubeseal-${KUBESEAL_VERSION}-linux-amd64.tar.gz"
+tar -xvzf kubeseal-${KUBESEAL_VERSION}-linux-amd64.tar.gz kubeseal
+sudo install -m 755 kubeseal /usr/local/bin/kubeseal
+```
+#### 3. Use the tool
+i. Create your DB secret as normal Kubernetes Secret `dbsecret.yaml` but don't apply it on the cluster
+
+ii. Encrypt the secret using this command. This will encrypt the secret using the controller public key and generate an encrypted file.
+```bash
+kubeseal --controller-name=sealed-secrets-controller --controller-namespace=kube-system --format=yaml < dbsecret.yaml > sealed_db_secret.yaml
+```
+iii. Now, the SealedSecret is safe to push in github. Only the controller in the cluster can decrypt it.
+
+iv. When the GitOps controller like ArgoCD applies this SealedSecret in the cluster, the same Kubernetes Secret will be created that you have encrypted earlier.
 
 ---
 
