@@ -1,15 +1,19 @@
-# MERN Application Infrastructure (mernapp-infra)
-
+# MERN Application Infrastructure
 This repository contains Terraform code to provision and manage the complete cloud infrastructure for deploying a production-ready MERN application on Google Cloud Platform (GCP). The setup includes automated CI/CD, secure networking, Kubernetes (GKE), monitoring, GitOps, and supporting services.
+
+## Architecture Diagram
+
+![Architecture](./assets/architecture_diagram.png)
+
 
 ---
 
-## 🔗 Related Repositories
+##  Related Repositories
 - [Application Code](https://github.com/greninja517/mernapp-code.git)
 - [GitOps Repo](https://github.com/greninja517/mernapp-gitops.git)
 
-## Features
 
+## Features
 - **Modular Terraform**: Infrastructure is organized into reusable modules (GKE, Bastion Host, Jenkins, etc.).
 - **Google Kubernetes Engine (GKE)**: Secure, private cluster with node pools, VPC-native networking, and NAT.
 - **Jenkins CI/CD**: Automated pipeline for provisioning, deployment, and lifecycle management.
@@ -20,7 +24,6 @@ This repository contains Terraform code to provision and manage the complete clo
 - **Firewall & IAM**: Fine-grained access control and network security.
 - **Automated Bootstrap Scripts**: For Jenkins and Bastion host provisioning.
 
----
 
 ## Getting Started
 
@@ -57,7 +60,7 @@ terraform apply
 
 The Jenkins pipeline (`Jenkinsfile`) automates provisioning and deployment. Configure Jenkins with your GCP service account credentials and connect it to this repository.
 
----
+
 
 ## Post-Provisioning Steps
 
@@ -66,11 +69,9 @@ The Jenkins pipeline (`Jenkinsfile`) automates provisioning and deployment. Conf
 - **Install ArgoCD, Monitoring, and KubeSeal**: See `cluster-setup.md` for detailed instructions.
 - **Manage Secrets**: Use KubeSeal to encrypt and store secrets in Git.
 
----
 
 ## Documentation
 
 - [`cluster-setup.md`](./cluster-setup.md): Step-by-step guide for cluster access, ArgoCD, monitoring, and secrets management.
 
----
 
