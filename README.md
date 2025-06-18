@@ -1,6 +1,9 @@
 # MERN Application Infrastructure
 This repository contains Terraform code to provision and manage the complete cloud infrastructure for deploying a production-ready MERN application on Google Cloud Platform (GCP). The setup includes automated CI/CD, secure networking, Kubernetes (GKE), monitoring, GitOps, and supporting services.
 
+### Checkout the Project Blog [here](https://anjalpoudel.hashnode.dev/mern-on-gke-an-end-to-end-devops-journey-with-terraform-jenkins-gitops-and-prometheus).
+---
+
 ## Architecture Diagram
 
 ![Architecture](./assets/architecture_diagram.png)
